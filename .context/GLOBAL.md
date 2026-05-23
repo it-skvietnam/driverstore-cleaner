@@ -11,6 +11,7 @@
 Load file context của module cụ thể khi làm việc với nó:
 
 - [`.`](.context/root.md)
+- [`modules/appdata`](.context/modules_appdata.md)
 - [`modules/driverstore`](.context/modules_driverstore.md)
 - [`tools`](.context/tools.md)
 

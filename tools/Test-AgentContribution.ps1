@@ -35,8 +35,8 @@ try {
         }
     }
 
-    $publicCsvs = @($tracked | Where-Object { ($_ -replace '\\', '/') -match '^reports/sessions/[^/]+/driverstore-research-public\.csv$' })
-    $requiredPublicHeaders = @(
+    $publicCsvs = @($tracked | Where-Object { ($_ -replace '\\', '/') -match '^reports/sessions/[^/]+/[^/]+-research-public\.csv$' })
+    $requiredDriverStoreHeaders = @(
         'ResearchId',
         'DriverName',
         'WebSearchQuery',
@@ -52,6 +52,22 @@ try {
         'ResearchNotes',
         'DeleteApproved'
     )
+    $requiredGenericHeaders = @(
+        'SessionId',
+        'Module',
+        'ResearchId',
+        'ItemName',
+        'ItemType',
+        'EstimatedSizeBytes',
+        'RiskLevel',
+        'CleanupMethod',
+        'ResearchStatus',
+        'Assessment',
+        'EvidenceUrl1',
+        'EvidenceUrl2',
+        'DeleteApproved',
+        'PublicNotes'
+    )
 
     foreach ($csv in $publicCsvs) {
         $content = Get-Content -Path $csv -Raw -Encoding UTF8
@@ -61,14 +77,19 @@ try {
         }
 
         $firstLine = ($content -split "`r?`n" | Select-Object -First 1).Trim()
-        $actualHeaders = @($firstLine -split ',')
-        foreach ($header in $requiredPublicHeaders) {
+        $actualHeaders = @($firstLine -split ',' | ForEach-Object { $_.Trim().Trim('"') })
+        $requiredHeaders = if (($csv -replace '\\', '/') -like '*/driverstore-research-public.csv') {
+            $requiredDriverStoreHeaders
+        } else {
+            $requiredGenericHeaders
+        }
+        foreach ($header in $requiredHeaders) {
             if ($actualHeaders -notcontains $header) {
                 $failures.Add("Public CSV missing required header '$header': $csv")
             }
         }
 
-        foreach ($header in @('PublishedName', 'Provider', 'ClassName', 'DriverDate', 'DriverVersion', 'SignerName')) {
+        foreach ($header in @('PublishedName', 'Provider', 'ClassName', 'DriverDate', 'DriverVersion', 'SignerName', 'LocalPath', 'LocalPathOrId', 'ExactCommand')) {
             if ($content -match "(^|,)$header(,|$)") {
                 $failures.Add("Public CSV contains private column '$header': $csv")
             }
@@ -76,15 +97,18 @@ try {
         if ($content -match 'oem\d+\.inf') {
             $failures.Add("Public CSV contains local PublishedName pattern: $csv")
         }
+        if ($content -match '(?i)([A-Z]:\\|/mnt/[a-z]/|\\Users\\|/home/)') {
+            $failures.Add("Public CSV appears to contain a local path: $csv")
+        }
 
         $sessionDir = Split-Path -Parent $csv
-        $spec = Join-Path $sessionDir 'driverstore-run-spec-public.md'
-        if (-not (Test-Path $spec -PathType Leaf)) {
+        $specs = @(Get-ChildItem -Path $sessionDir -Filter '*-run-spec-public.md' -File -ErrorAction SilentlyContinue)
+        if ($specs.Count -eq 0) {
             $failures.Add("Missing public run spec for $csv")
         }
     }
 
-    $publicSpecs = @($tracked | Where-Object { ($_ -replace '\\', '/') -match '^reports/sessions/[^/]+/driverstore-run-spec-public\.md$' })
+    $publicSpecs = @($tracked | Where-Object { ($_ -replace '\\', '/') -match '^reports/sessions/[^/]+/[^/]+-run-spec-public\.md$' })
     foreach ($spec in $publicSpecs) {
         $content = Get-Content -Path $spec -Raw -Encoding UTF8
         foreach ($required in @('Windows generation', 'OEM', 'Machine family', 'Model line', 'Privacy Checklist')) {
@@ -94,6 +118,9 @@ try {
         }
         if ($content -match 'oem\d+\.inf') {
             $failures.Add("Public run spec contains local PublishedName pattern: $spec")
+        }
+        if ($content -match '(?i)([A-Z]:\\|/mnt/[a-z]/|\\Users\\|/home/)') {
+            $failures.Add("Public run spec appears to contain a local path: $spec")
         }
     }
 

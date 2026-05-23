@@ -14,11 +14,11 @@ Current module:
 
 - `driverstore`: stale Windows driver package research and gated cleanup via
   `pnputil`.
+- `appdata`: analyze-only cache/store reporting for AppData and developer caches.
 
 Planned modules:
 
 - `winsxs`
-- `appdata`
 - `office-outlook`
 - `browser-cache`
 - `dev-cache`
@@ -66,6 +66,10 @@ driverstore-cleaner/
 |-- Remove-DriverStoreCandidates.ps1         # compatibility wrapper
 |-- modules/
 |   |-- MODULES.md
+|   |-- appdata/
+|   |   |-- Analyze-AppDataCaches.ps1
+|   |   |-- README.md
+|   |   `-- policy.md
 |   `-- driverstore/
 |       |-- Analyze-DriverStore.ps1
 |       |-- Research-DriverCandidates.ps1
@@ -82,7 +86,8 @@ driverstore-cleaner/
 |   `-- sessions/
 |       |-- .gitkeep
 |       |-- POC-TEST/
-|       `-- POC-DRYRUN-20260523/
+|       |-- POC-DRYRUN-20260523/
+|       `-- APPDATA-DRYRUN-20260524/
 |-- research-notes/
 |   |-- README.md
 |   |-- TEMPLATE.md
@@ -123,6 +128,25 @@ Private files are local-only and git-ignored:
 Generated test outputs are kept for inspection but ignored:
 
 - `tests/generated/`
+
+## AppData analyze-only workflow
+
+M3 adds AppData analysis without deletion:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\modules\appdata\Analyze-AppDataCaches.ps1 `
+  -OutputDir .\reports `
+  -SessionId APPDATA-DRYRUN-20260524
+```
+
+The script writes:
+
+- `reports\sessions\<session-id>\appdata-research-private.csv`: local paths and
+  private execution context, git-ignored.
+- `reports\sessions\<session-id>\appdata-research-public.csv`: public cache
+  categories, risk levels, and estimated sizes.
+
+No files are deleted. Outlook mail stores are reported as `DoNotDelete`.
 
 ## DriverStore cleanup workflow
 

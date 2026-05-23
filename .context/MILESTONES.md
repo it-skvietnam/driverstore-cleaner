@@ -9,8 +9,8 @@
 ## Current Milestone
 
 Current: **M3 - AppData Analyze-Only Module**
-Status: **PENDING**
-Started: **not started**
+Status: **DONE**
+Started: **2026-05-24**
 
 ---
 
@@ -70,13 +70,13 @@ Status: **PENDING**
 
 Acceptance:
 
-- [ ] Add `modules/appdata/README.md`.
-- [ ] Add analyze-only script for cache candidates.
-- [ ] Report `%LOCALAPPDATA%\Temp`, Office cache, browser caches, and dev caches.
-- [ ] Do not delete anything.
-- [ ] Produce public/private artifacts using shared schema.
-- [ ] Add research note and run spec for first AppData scan.
-- [ ] Validation passes.
+- [x] Add `modules/appdata/README.md`.
+- [x] Add analyze-only script for cache candidates.
+- [x] Report `%LOCALAPPDATA%\Temp`, Office cache, browser caches, and dev caches.
+- [x] Do not delete anything.
+- [x] Produce public/private artifacts using shared schema.
+- [x] Add research note and run spec for first AppData scan.
+- [x] Validation passes.
 
 ### M4 - Unified Reports and Metrics
 
@@ -100,4 +100,3 @@ Acceptance:
 - [ ] Report component store cleanup recommendation.
 - [ ] Do not manually delete WinSxS files.
 - [ ] Document `StartComponentCleanup` and `/ResetBase` tradeoffs.
-

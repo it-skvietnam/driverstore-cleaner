@@ -13,13 +13,13 @@ No module should delete data during analyze or research.
 | Module | Status | Default action | Notes |
 |---|---|---|---|
 | `driverstore` | Active | `ReviewRequired` | Uses `pnputil`; never delete files from DriverStore directly. |
+| `appdata` | Active analyze-only | `SafeWithClosedApps` / `ReviewRequired` | Reports known cache/store areas; no deletion support in M3. |
 
 ## Planned Modules
 
 | Module | Status | Default action | Notes |
 |---|---|---|---|
 | `winsxs` | Planned | `ExplainOnly` | Use DISM/Storage Sense only. |
-| `appdata` | Planned | `SafeWithClosedApps` / `ReviewRequired` | Cache-oriented, never profile-wide blind delete. |
 | `office-outlook` | Planned | `ReviewRequired` | Office cache may be cleanable; Outlook OST is `DoNotDelete`. |
 | `browser-cache` | Planned | `SafeWithClosedApps` | Cache only, not profiles/passwords/session data. |
 | `dev-cache` | Planned | `ReviewRequired` | npm, pip, NuGet, Gradle, package-manager-specific cleanup. |
@@ -37,4 +37,3 @@ No module should delete data during analyze or research.
 | `HighRisk` | May affect rollback, dev environments, or device function. |
 | `DoNotDelete` | Report only; deletion is not part of this workflow. |
 | `ExplainOnly` | Use supported OS tooling; do not manually remove. |
-
