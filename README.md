@@ -56,23 +56,73 @@ analysis, browser/dev caches, restore points, and Windows Update cache.
 ## Module layout
 
 ```text
-modules/
-├─ MODULES.md
-└─ driverstore/
-   ├─ Analyze-DriverStore.ps1
-   ├─ Research-DriverCandidates.ps1
-   ├─ Merge-DriverResearchReview.ps1
-   ├─ Remove-DriverStoreCandidates.ps1
-   └─ README.md
-
-schemas/
-├─ candidate.schema.md
-├─ module-policy.schema.md
-├─ public-run-spec.schema.md
-└─ research-note.schema.md
+driverstore-cleaner/
+|-- AGENTS.md
+|-- CONTRIBUTING.md
+|-- README.md
+|-- Analyze-DriverStore.ps1                  # compatibility wrapper
+|-- Research-DriverCandidates.ps1            # compatibility wrapper
+|-- Merge-DriverResearchReview.ps1           # compatibility wrapper
+|-- Remove-DriverStoreCandidates.ps1         # compatibility wrapper
+|-- modules/
+|   |-- MODULES.md
+|   `-- driverstore/
+|       |-- Analyze-DriverStore.ps1
+|       |-- Research-DriverCandidates.ps1
+|       |-- Merge-DriverResearchReview.ps1
+|       |-- Remove-DriverStoreCandidates.ps1
+|       `-- README.md
+|-- schemas/
+|   |-- candidate.schema.md
+|   |-- module-policy.schema.md
+|   |-- public-run-spec.schema.md
+|   `-- research-note.schema.md
+|-- reports/
+|   |-- .gitkeep
+|   `-- sessions/
+|       |-- .gitkeep
+|       |-- POC-TEST/
+|       `-- POC-DRYRUN-20260523/
+|-- research-notes/
+|   |-- README.md
+|   |-- TEMPLATE.md
+|   |-- 2026-05-23-poc-test-codex.md
+|   `-- 2026-05-23-poc-dryrun-20260523-codex.md
+|-- tests/
+|   |-- mock-candidates.csv
+|   |-- mock-public.csv
+|   `-- generated/                           # ignored local test outputs
+|-- tools/
+|   `-- Test-AgentContribution.ps1
+`-- .github/
+    |-- PULL_REQUEST_TEMPLATE.md
+    |-- ISSUE_TEMPLATE/
+    `-- workflows/
 ```
 
 Root-level DriverStore scripts remain as compatibility wrappers.
+
+## Public, Private, and Generated Files
+
+Public files can be committed and shared:
+
+- source code under `modules/`, `tools/`, and root wrappers,
+- public docs and schemas,
+- `reports/sessions/*/driverstore-research-public.csv`,
+- `reports/sessions/*/driverstore-run-spec-public.md`,
+- `research-notes/*.md`,
+- mock fixtures under `tests/`.
+
+Private files are local-only and git-ignored:
+
+- `docs/private/`,
+- raw driver inventory under `reports/driverstore-*.csv` and `.txt`,
+- private and merged session CSV files,
+- any mapping from `ResearchId` to `oemXX.inf` or local paths.
+
+Generated test outputs are kept for inspection but ignored:
+
+- `tests/generated/`
 
 ## DriverStore cleanup workflow
 

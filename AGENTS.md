@@ -31,6 +31,9 @@ Every agent session starts with:
 ```powershell
 Get-Content README.md
 Get-Content AGENTS.md
+Get-Content .context\GLOBAL.md
+Get-Content .context\MILESTONES.md
+Get-Content .context\TENSIONS_OPEN.md
 Get-Content .gitignore
 git status --short -uall --ignored
 ```
