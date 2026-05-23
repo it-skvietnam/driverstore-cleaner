@@ -1,0 +1,52 @@
+name: Agent scan contribution
+description: Propose an anonymized DriverStore scan or research run.
+title: "Agent scan: <OEM/model family> <Windows generation>"
+labels:
+  - agent-scan
+  - research
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this issue to coordinate an anonymized DriverStore scan or research run.
+        Do not paste raw `pnputil` output or local `oemXX.inf` mappings.
+  - type: input
+    id: windows_generation
+    attributes:
+      label: Windows generation
+      description: Example: Windows 11 24H2, Windows 10 22H2
+    validations:
+      required: true
+  - type: input
+    id: oem_family
+    attributes:
+      label: OEM and machine family
+      description: Example: Lenovo ThinkPad, Dell Latitude, HP Pavilion
+    validations:
+      required: true
+  - type: input
+    id: model_line
+    attributes:
+      label: Model line
+      description: Example: ThinkPad T14 Gen 2. Use unknown if not safe to share.
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: Contribution goal
+      description: What should the agent scan or research?
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy checklist
+      options:
+        - label: I will not share raw pnputil output.
+          required: true
+        - label: I will not share oemXX.inf mappings.
+          required: true
+        - label: I will include a public run spec in the PR.
+          required: true
+

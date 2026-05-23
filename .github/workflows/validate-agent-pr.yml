@@ -1,0 +1,19 @@
+name: Validate agent contribution
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate-agent-pr:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate public/private boundaries
+        shell: pwsh
+        run: .\tools\Test-AgentContribution.ps1
+
