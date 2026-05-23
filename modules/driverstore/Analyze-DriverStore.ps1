@@ -2,7 +2,9 @@
 param(
     [string]$OutputDir = (Join-Path $PSScriptRoot 'reports'),
     [string]$SessionId = (Get-Date -Format 'yyyyMMdd-HHmmss'),
-    [switch]$IncludeRiskyClasses
+    [switch]$IncludeRiskyClasses,
+    [int]$TopFileRepositoryFolders = 30,
+    [switch]$PublicFolderNames
 )
 
 Set-StrictMode -Version Latest
@@ -87,7 +89,9 @@ function Get-DriverGroupKey {
 
 function Export-PublicResearchCsv {
     param(
-        [Parameter(Mandatory)][object[]]$Rows,
+        [Parameter(Mandatory)]
+        [AllowEmptyCollection()]
+        [object[]]$Rows,
         [Parameter(Mandatory)][string]$Path
     )
 
@@ -116,6 +120,96 @@ function Export-PublicResearchCsv {
     $Rows | Select-Object $headers | Export-Csv -Path $Path -NoTypeInformation -Encoding UTF8
 }
 
+function Get-DirectorySizeBytes {
+    param([Parameter(Mandatory)][string]$Path)
+
+    if (-not (Test-Path -LiteralPath $Path -PathType Container)) {
+        return 0
+    }
+
+    $total = 0L
+    Get-ChildItem -LiteralPath $Path -Recurse -Force -File -ErrorAction SilentlyContinue |
+        ForEach-Object { $total += $_.Length }
+
+    return $total
+}
+
+function Get-DriverStoreTopLevelInventory {
+    param(
+        [Parameter(Mandatory)][string]$SessionId,
+        [Parameter(Mandatory)][string]$RootPath,
+        [Parameter(Mandatory)][int]$Top
+    )
+
+    if (-not (Test-Path -LiteralPath $RootPath -PathType Container)) {
+        return @()
+    }
+
+    $rows = New-Object System.Collections.Generic.List[object]
+    foreach ($directory in Get-ChildItem -LiteralPath $RootPath -Directory -Force -ErrorAction SilentlyContinue) {
+        $size = Get-DirectorySizeBytes -Path $directory.FullName
+        $rows.Add([pscustomobject]@{
+            SessionId = $SessionId
+            Module = 'driverstore'
+            InventoryId = ''
+            Scope = 'DriverStoreFileRepositoryTopLevel'
+            FolderName = $directory.Name
+            LocalPath = $directory.FullName
+            EstimatedSizeBytes = $size
+            EstimatedSizeMB = [math]::Round($size / 1MB, 2)
+            RiskLevel = 'ReviewRequired'
+            Assessment = 'InventoryOnly'
+            PublicNotes = 'Top-level DriverStore FileRepository inventory. This is not a cleanup candidate by itself.'
+        })
+    }
+
+    $rank = 0
+    foreach ($row in @($rows | Sort-Object EstimatedSizeBytes -Descending | Select-Object -First $Top)) {
+        $rank++
+        $row.InventoryId = 'DRVSTORE-TOP-{0:D4}' -f $rank
+        $row
+    }
+}
+
+function Export-PublicInventoryCsv {
+    param(
+        [Parameter(Mandatory)]
+        [AllowEmptyCollection()]
+        [object[]]$Rows,
+        [Parameter(Mandatory)][string]$Path,
+        [switch]$PublicFolderNames
+    )
+
+    $publicRows = foreach ($row in $Rows) {
+        $rank = [int]($row.InventoryId -replace '\D', '')
+        $displayName = if ($PublicFolderNames) {
+            $row.FolderName
+        } else {
+            'DriverStore FileRepository top-level #{0:D2}' -f $rank
+        }
+
+        [pscustomobject]@{
+            SessionId = $row.SessionId
+            Module = $row.Module
+            InventoryId = $row.InventoryId
+            Scope = $row.Scope
+            ItemName = $displayName
+            ItemType = 'top-level-inventory'
+            EstimatedSizeBytes = $row.EstimatedSizeBytes
+            EstimatedSizeMB = $row.EstimatedSizeMB
+            RiskLevel = $row.RiskLevel
+            Assessment = $row.Assessment
+            PublicNotes = if ($PublicFolderNames) {
+                $row.PublicNotes
+            } else {
+                'Folder name redacted in public output; see private report locally.'
+            }
+        }
+    }
+
+    $publicRows | Export-Csv -Path $Path -NoTypeInformation -Encoding UTF8
+}
+
 New-Item -ItemType Directory -Path $OutputDir -Force | Out-Null
 
 $rawPath = Join-Path $OutputDir 'driverstore-raw.txt'
@@ -125,6 +219,8 @@ $reviewPath = Join-Path $OutputDir 'driverstore-research-review.csv'
 $sessionDir = Join-Path (Join-Path $OutputDir 'sessions') $SessionId
 $privateReviewPath = Join-Path $sessionDir 'driverstore-research-private.csv'
 $publicReviewPath = Join-Path $sessionDir 'driverstore-research-public.csv'
+$topPrivatePath = Join-Path $sessionDir 'driverstore-filerepository-top-private.csv'
+$topPublicPath = Join-Path $sessionDir 'driverstore-filerepository-top-public.csv'
 
 New-Item -ItemType Directory -Path $sessionDir -Force | Out-Null
 
@@ -208,13 +304,27 @@ $publicReviewRows = foreach ($candidate in $candidates) {
 }
 Export-PublicResearchCsv -Rows @($publicReviewRows) -Path $publicReviewPath
 
+$fileRepositoryPath = Join-Path $env:WINDIR 'System32\DriverStore\FileRepository'
+$topRows = @(Get-DriverStoreTopLevelInventory -SessionId $SessionId -RootPath $fileRepositoryPath -Top $TopFileRepositoryFolders)
+$topRows | Export-Csv -Path $topPrivatePath -NoTypeInformation -Encoding UTF8
+Export-PublicInventoryCsv -Rows $topRows -Path $topPublicPath -PublicFolderNames:$PublicFolderNames
+
+$topTotalBytes = ($topRows | Measure-Object -Property EstimatedSizeBytes -Sum).Sum
+if ($null -eq $topTotalBytes) {
+    $topTotalBytes = 0
+}
+
 Write-Host "Raw output: $rawPath"
 Write-Host "All drivers: $allPath"
 Write-Host "Candidates: $candidatePath"
 Write-Host "Research review CSV: $reviewPath"
 Write-Host "Private session review CSV: $privateReviewPath"
 Write-Host "Public anonymized review CSV: $publicReviewPath"
+Write-Host "Private FileRepository top-level inventory: $topPrivatePath"
+Write-Host "Public FileRepository top-level inventory: $topPublicPath"
 Write-Host "Candidate count: $($candidates.Count)"
+Write-Host "Top-level FileRepository inventory rows: $($topRows.Count)"
+Write-Host "Top-level FileRepository inventory total MB: $([math]::Round($topTotalBytes / 1MB, 2))"
 if (-not $IncludeRiskyClasses) {
     Write-Host 'Risky driver classes were excluded. Re-run with -IncludeRiskyClasses only for manual investigation.'
 }

@@ -178,10 +178,19 @@ The script writes:
 - `reports\sessions\<session-id>\driverstore-research-public.csv`: anonymized
   research file containing only `ResearchId`, driver name, search prompts, and
   review fields.
+- `reports\sessions\<session-id>\driverstore-filerepository-top-private.csv`:
+  TreeSize-like top-level `FileRepository` inventory with folder names and local
+  paths, git-ignored.
+- `reports\sessions\<session-id>\driverstore-filerepository-top-public.csv`:
+  redacted top-level `FileRepository` inventory with sizes only, safe for public
+  comparison.
 
 Candidates are old duplicate packages where the newest matching package is kept.
 The analyzer excludes risky classes by default: display, network, Bluetooth,
 storage, system, USB controller, audio, printer, and firmware-related classes.
+The top-level inventory is discovery data only. A large folder does not become a
+delete candidate until it is mapped to an installed driver package, researched, and
+approved through the review gate.
 
 ## Privacy split for research
 
@@ -328,6 +337,30 @@ Research outcome:
 This validates the current safety model: a broad duplicate scan can reveal useful
 research targets, but the default deletion list should stay empty until evidence
 proves a package is only an outdated duplicate.
+
+## Case study: DriverStore footprint inventory correction
+
+Session `DRIVERSTORE-INVENTORY-20260524` corrects the earlier DriverStore report
+shape. The previous workflow reported duplicate-driver cleanup candidates, but did
+not publish a TreeSize-like inventory of
+`C:\Windows\System32\DriverStore\FileRepository`.
+
+New result:
+
+- conservative duplicate cleanup candidates: 0
+- top-level `FileRepository` inventory rows: 40
+- top-level `FileRepository` inventory total: 4,838.89 MB
+- executed deletions: 0
+
+The largest private inventory rows match the observed storage footprint: NVIDIA
+display package around 2.55 GB, Intel graphics package around 1.28 GB, and Realtek
+audio package folders around 169 MB and 157 MB. Public inventory redacts those
+folder names by default because driver package names can fingerprint the machine.
+
+Conclusion: the earlier "0 candidates" result only meant "0 packages passed the
+conservative deletion gate." It did not mean DriverStore has no large research
+targets. Large display/audio folders should be treated as review-required inventory,
+not automatic deletion candidates.
 
 ## PoC critique
 

@@ -1,4 +1,4 @@
-<!-- AUTO_START | hash: f026db99 | built: 2026-05-24T00:51 -->
+<!-- AUTO_START | hash: 535c20f7 | built: 2026-05-24T00:56 -->
 # Context: `modules/driverstore`
 
 > **[auto-generated — không sửa tay phần này]**  
@@ -13,6 +13,10 @@ Các hàm được expose qua IPC bridge:
   ```text
   function Get-FieldValue([Parameter(Mandatory)]$Object, [Parameter(Mandatory)][string[]]$Names)
   ```
+- **`Get-DirectorySizeBytes`**
+  ```text
+  function Get-DirectorySizeBytes([Parameter(Mandatory)][string]$Path)
+  ```
 - **`pnputil`**
 - **`ConvertFrom-PnpUtilEnumDrivers`**
   ```text
@@ -24,14 +28,26 @@ Các hàm được expose qua IPC bridge:
   ```
 - **`Export-PublicResearchCsv`**
   ```text
-  function Export-PublicResearchCsv([Parameter(Mandatory)][object[]]$Rows, [Parameter(Mandatory)][string]$Path)
+  function Export-PublicResearchCsv([Parameter(Mandatory)]
+        [AllowEmptyCollection()]
+        [object[]]$Rows, [Parameter(Mandatory)][string]$Path)
+  ```
+- **`Get-DriverStoreTopLevelInventory`**
+  ```text
+  function Get-DriverStoreTopLevelInventory([Parameter(Mandatory)][string]$SessionId, [Parameter(Mandatory)][string]$RootPath, [Parameter(Mandatory)][int]$Top)
+  ```
+- **`Export-PublicInventoryCsv`**
+  ```text
+  function Export-PublicInventoryCsv([Parameter(Mandatory)]
+        [AllowEmptyCollection()]
+        [object[]]$Rows, [Parameter(Mandatory)][string]$Path, [switch]$PublicFolderNames)
   ```
 
 ## [auto] Public Functions
 
 ### `Analyze-DriverStore` (line 1)
 ```text
-function Analyze-DriverStore([string]$OutputDir = (Join-Path $PSScriptRoot 'reports'), [string]$SessionId = (Get-Date -Format 'yyyyMMdd-HHmmss'), [switch]$IncludeRiskyClasses)
+function Analyze-DriverStore([string]$OutputDir = (Join-Path $PSScriptRoot 'reports'), [string]$SessionId = (Get-Date -Format 'yyyyMMdd-HHmmss'), [switch]$IncludeRiskyClasses, [int]$TopFileRepositoryFolders = 30, [switch]$PublicFolderNames)
 ```
 
 ### `Merge-DriverResearchReview` (line 1)

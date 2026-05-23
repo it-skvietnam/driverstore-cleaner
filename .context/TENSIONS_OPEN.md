@@ -30,3 +30,16 @@ Milestone:  M3 - AppData Analyze-Only Module
 Decision:   [human fill in]
 
 ---
+
+## 2026-05-24T00:56 | staleness | modules_driverstore
+Status:     OPEN
+Tension:    `[auto]` thay đổi nhưng `[manual]` chưa review
+Context:    Hash mismatch trong `.context/modules_driverstore.md` — `f026db99` → `535c20f7` (built: 2026-05-24T00:51)
+Proposal:   Review `[manual]` Design Decisions và Invariants của module `modules_driverstore`, confirm hoặc update nếu cần, rebuild để clear warning
+Constraint: `[manual]` có thể outdated so với code thực tế
+Severity:   low
+Tags:       staleness, modules_driverstore
+Milestone:  M3 - AppData Analyze-Only Module
+Decision:   [human fill in]
+
+---
