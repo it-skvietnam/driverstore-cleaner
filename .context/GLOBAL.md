@@ -1,3 +1,21 @@
+<!-- AUTO_START -->
+# Global Context
+
+> **[auto-generated — không sửa tay phần này]**
+
+## [auto] Tech Stack
+
+
+## [auto] Module Index
+
+Load file context của module cụ thể khi làm việc với nó:
+
+- [`.`](.context/root.md)
+- [`modules/driverstore`](.context/modules_driverstore.md)
+- [`tools`](.context/tools.md)
+
+<!-- AUTO_END -->
+
 # GLOBAL.md - Windows Storage Research Cleaner
 
 This repository is an agent-assisted research-first Windows storage cleanup project.
