@@ -85,6 +85,37 @@ function Get-DriverGroupKey {
     return "$provider|$class|$original"
 }
 
+function Export-PublicResearchCsv {
+    param(
+        [Parameter(Mandatory)][object[]]$Rows,
+        [Parameter(Mandatory)][string]$Path
+    )
+
+    $headers = @(
+        'ResearchId',
+        'DriverName',
+        'WebSearchQuery',
+        'LegacySearchQuery',
+        'WebResearchStatus',
+        'DriverAssessment',
+        'LatestVersionFound',
+        'LatestDriverDateFound',
+        'EvidenceUrl1',
+        'EvidenceUrl2',
+        'EvidenceSourceType',
+        'LegacyRisk',
+        'ResearchNotes',
+        'DeleteApproved'
+    )
+
+    if ($Rows.Count -eq 0) {
+        ($headers -join ',') | Set-Content -Path $Path -Encoding UTF8
+        return
+    }
+
+    $Rows | Select-Object $headers | Export-Csv -Path $Path -NoTypeInformation -Encoding UTF8
+}
+
 New-Item -ItemType Directory -Path $OutputDir -Force | Out-Null
 
 $rawPath = Join-Path $OutputDir 'driverstore-raw.txt'
@@ -175,7 +206,7 @@ $publicReviewRows = foreach ($candidate in $candidates) {
         DeleteApproved = 'FALSE'
     }
 }
-$publicReviewRows | Export-Csv -Path $publicReviewPath -NoTypeInformation -Encoding UTF8
+Export-PublicResearchCsv -Rows @($publicReviewRows) -Path $publicReviewPath
 
 Write-Host "Raw output: $rawPath"
 Write-Host "All drivers: $allPath"

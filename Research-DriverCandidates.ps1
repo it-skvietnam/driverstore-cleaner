@@ -11,6 +11,37 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+function Export-PublicResearchCsv {
+    param(
+        [Parameter(Mandatory)][object[]]$Rows,
+        [Parameter(Mandatory)][string]$Path
+    )
+
+    $headers = @(
+        'ResearchId',
+        'DriverName',
+        'WebSearchQuery',
+        'LegacySearchQuery',
+        'WebResearchStatus',
+        'DriverAssessment',
+        'LatestVersionFound',
+        'LatestDriverDateFound',
+        'EvidenceUrl1',
+        'EvidenceUrl2',
+        'EvidenceSourceType',
+        'LegacyRisk',
+        'ResearchNotes',
+        'DeleteApproved'
+    )
+
+    if ($Rows.Count -eq 0) {
+        ($headers -join ',') | Set-Content -Path $Path -Encoding UTF8
+        return
+    }
+
+    $Rows | Select-Object $headers | Export-Csv -Path $Path -NoTypeInformation -Encoding UTF8
+}
+
 if (-not $OutputCsv) {
     $directory = Split-Path -Parent $CandidatesCsv
     $OutputCsv = Join-Path $directory 'driverstore-research-review.csv'
@@ -87,9 +118,8 @@ $publicRows = foreach ($row in $reviewRows) {
         DeleteApproved = 'FALSE'
     }
 }
-$publicRows | Export-Csv -Path $PublicOutputCsv -NoTypeInformation -Encoding UTF8
+Export-PublicResearchCsv -Rows @($publicRows) -Path $PublicOutputCsv
 
 Write-Host "Research review CSV: $OutputCsv"
 Write-Host "Public anonymized research CSV: $PublicOutputCsv"
 Write-Host 'Fill the research fields before deletion. Keep DeleteApproved=FALSE unless evidence confirms this is only an outdated duplicate.'
-

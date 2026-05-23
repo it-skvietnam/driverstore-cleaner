@@ -36,8 +36,38 @@ try {
     }
 
     $publicCsvs = @($tracked | Where-Object { ($_ -replace '\\', '/') -match '^reports/sessions/[^/]+/driverstore-research-public\.csv$' })
+    $requiredPublicHeaders = @(
+        'ResearchId',
+        'DriverName',
+        'WebSearchQuery',
+        'LegacySearchQuery',
+        'WebResearchStatus',
+        'DriverAssessment',
+        'LatestVersionFound',
+        'LatestDriverDateFound',
+        'EvidenceUrl1',
+        'EvidenceUrl2',
+        'EvidenceSourceType',
+        'LegacyRisk',
+        'ResearchNotes',
+        'DeleteApproved'
+    )
+
     foreach ($csv in $publicCsvs) {
         $content = Get-Content -Path $csv -Raw -Encoding UTF8
+        if ([string]::IsNullOrWhiteSpace($content)) {
+            $failures.Add("Public CSV is empty and missing schema header: $csv")
+            continue
+        }
+
+        $firstLine = ($content -split "`r?`n" | Select-Object -First 1).Trim()
+        $actualHeaders = @($firstLine -split ',')
+        foreach ($header in $requiredPublicHeaders) {
+            if ($actualHeaders -notcontains $header) {
+                $failures.Add("Public CSV missing required header '$header': $csv")
+            }
+        }
+
         foreach ($header in @('PublishedName', 'Provider', 'ClassName', 'DriverDate', 'DriverVersion', 'SignerName')) {
             if ($content -match "(^|,)$header(,|$)") {
                 $failures.Add("Public CSV contains private column '$header': $csv")
