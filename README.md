@@ -1,4 +1,42 @@
-# DriverStore cleanup workflow
+# DriverStore Cleaner
+
+DriverStore Cleaner is a proof-of-concept workflow for reducing Windows
+`DriverStore` bloat without treating driver deletion as a blind cleanup task. It
+uses `pnputil` for all driver operations, keeps local machine details private, and
+adds a research gate before any driver package can be removed.
+
+The repo exists because most DriverStore cleanup tools still depend on the user to
+decide whether an old package is safe to remove. That is a hard judgment: an old
+driver can be a harmless outdated duplicate, or it can be a legacy package required
+for hotkeys, ACPI devices, sensors, storage, audio routing, or vendor utilities.
+This workflow turns that judgment into a reviewable CSV process with evidence
+fields, privacy boundaries, dry-run execution, and audit-friendly outputs.
+
+## Problem gap
+
+Existing cleanup flows usually cover only part of the problem:
+
+- They can list old driver packages, but they do not prove whether a package is an
+  outdated duplicate or a required legacy dependency.
+- They expose local machine details when the user wants outside help researching
+  drivers.
+- They rarely separate public research evidence from private deletion mappings.
+- They do not produce a clear report showing what was excluded, what was approved,
+  what was deleted, and how effective the cleanup was.
+
+This repo is designed to close that gap by splitting the process into private local
+state, public anonymized research, review-gated deletion, and session reporting.
+
+## Current safety model
+
+- Never delete directly from `C:\Windows\System32\DriverStore\FileRepository`.
+- Use `pnputil /delete-driver ... /uninstall` for removal.
+- Keep raw/local driver inventory private and git-ignored.
+- Share only anonymized `ResearchId` plus driver-name research prompts.
+- Default unknown or legacy-looking drivers to keep.
+- Require explicit approval before any real deletion.
+
+## DriverStore cleanup workflow
 
 This workflow cleans `C:\Windows\System32\DriverStore\FileRepository` safely by using
 Windows driver APIs through `pnputil`. Do not delete files directly from DriverStore.
@@ -131,6 +169,21 @@ It does not use `/force` unless you explicitly pass `-ForceDelete`.
 Before deleting, create a restore point or at least confirm that you have a network
 driver installer available offline. If a device stops working, reinstall the vendor
 driver package or use Device Manager to update the driver.
+
+## Reporting plan
+
+When a session is executed, the workflow should produce both public and private
+reports:
+
+- Public report: anonymized metrics suitable for the README or sharing. It should
+  include candidate count, reviewed count, approved deletions, legacy keeps, unknown
+  keeps, failed deletions, and observed DriverStore size impact.
+- Private audit report: local-only evidence with `ResearchId` to `PublishedName`
+  mapping, exact `pnputil` commands, exit codes, pre/post snapshots, and recovery
+  notes.
+
+Do not publish private reports. Only append a public summary to this README after a
+real execution has been explicitly approved and completed.
 
 ## PoC critique
 

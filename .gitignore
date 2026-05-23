@@ -1,5 +1,8 @@
 ﻿*.log
 
+# Private research notes and local design records.
+/docs/private/
+
 # Private/local DriverStore outputs. These can fingerprint the machine.
 /reports/driverstore-raw.txt
 /reports/driverstore-all.csv
