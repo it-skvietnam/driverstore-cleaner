@@ -52,6 +52,10 @@ Useful PRs include:
 - reporting improvements,
 - validation improvements.
 
+Every PR should explain the contribution in plain language. A reviewer should be
+able to understand what the agent ran, what information was made public, what stayed
+private, and whether anything about the machine or Windows generation was special.
+
 ## What PRs Must Not Include
 
 Do not commit:
@@ -78,9 +82,22 @@ Machine context matters. For example, a ThinkPad can carry Lenovo-customized Rea
 Intel, ACPI, hotkey, and system extension packages that generic driver-name research
 may misclassify.
 
+## Required PR Narrative
+
+In addition to the public run spec, the PR description must include:
+
+- What was done: analyze, research, dry-run, execute, or docs/tooling.
+- What public information was added.
+- What private information was generated but kept local.
+- What is special about the run: Windows generation, OEM, machine family, model
+  generation, risky driver families, legacy packages, or unusual duplicate patterns.
+- What the result means for the dataset or future TreeSize-like scanner.
+
+Good PR descriptions explain both positive and negative results. A run that deletes
+nothing can still be valuable if it proves a class of drivers should be kept.
+
 ## Review Standard
 
 The best contribution is not the one that deletes the most drivers. The best
 contribution is the one that explains why a package is safe to delete or why it
 must be kept.
-

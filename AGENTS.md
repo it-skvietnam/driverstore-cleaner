@@ -211,6 +211,21 @@ Why this file matters:
   hotkey, and system extension drivers that generic research would misclassify.
 - A dataset without machine context cannot become a serious research artifact.
 
+## 4.1 PR Requirement: Narrative Explanation
+
+Every PR must explain what happened, not only attach CSV files. Include:
+
+- What the agent ran: analyze, research, dry-run, execute, docs, or tooling.
+- What public information was added.
+- What private information was intentionally kept local.
+- What is special about this run: Windows generation, OEM, machine family, model
+  line, risky driver family, legacy package, or odd duplicate pattern.
+- What the result contributes to the dataset or future TreeSize-like scanner.
+
+Negative results are valid. If no driver was deleted, explain why that is useful:
+for example, the run may show that a ThinkPad audio package is OEM-specific and
+should not be treated as a generic Realtek duplicate.
+
 ---
 
 ## 5. Research Evidence Rules
