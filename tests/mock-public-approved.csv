@@ -1,0 +1,2 @@
+"ResearchId","DriverName","WebSearchQuery","LegacySearchQuery","WebResearchStatus","DriverAssessment","LatestVersionFound","LatestDriverDateFound","EvidenceUrl1","EvidenceUrl2","EvidenceSourceType","LegacyRisk","ResearchNotes","DeleteApproved"
+"DRV-0001","example.inf","""example.inf"" driver","""example.inf"" legacy Windows XP Windows 7 required","Reviewed","OutdatedDuplicate","2.0.0.0","2025-01-01","https://example.invalid/vendor-driver","https://example.invalid/release-notes","VendorSupport","Low","Mock public review used to test merge only.","TRUE"

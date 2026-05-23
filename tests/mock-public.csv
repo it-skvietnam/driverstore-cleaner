@@ -1,0 +1,2 @@
+﻿"ResearchId","DriverName","WebSearchQuery","LegacySearchQuery","WebResearchStatus","DriverAssessment","LatestVersionFound","LatestDriverDateFound","EvidenceUrl1","EvidenceUrl2","EvidenceSourceType","LegacyRisk","ResearchNotes","DeleteApproved"
+"DRV-0001","example.inf","""example.inf"" driver","""example.inf"" legacy Windows XP Windows 7 required","PendingResearch","UnknownKeep","","","","","","Unknown","","FALSE"
