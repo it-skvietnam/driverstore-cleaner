@@ -192,6 +192,14 @@ The top-level inventory is discovery data only. A large folder does not become a
 delete candidate until it is mapped to an installed driver package, researched, and
 approved through the review gate.
 
+DriverStore reports must keep folder size visible:
+
+- inventory CSV files include `EstimatedSizeBytes` and `EstimatedSizeMB`,
+- candidate/research CSV files include `PackageFolderCount`,
+  `EstimatedPackageSizeBytes`, and `EstimatedPackageSizeMB` when candidates exist,
+- public run specs include a top-size summary table so results can be compared with
+  TreeSize or similar tools without opening private reports.
+
 ## Privacy split for research
 
 For each analysis session, keep two paired files:
@@ -351,6 +359,16 @@ New result:
 - top-level `FileRepository` inventory rows: 40
 - top-level `FileRepository` inventory total: 4,838.89 MB
 - executed deletions: 0
+
+Top public inventory sizes:
+
+| Public inventory ID | Estimated size |
+|---|---:|
+| DRVSTORE-TOP-0001 | 2,554.15 MB |
+| DRVSTORE-TOP-0002 | 1,279.15 MB |
+| DRVSTORE-TOP-0003 | 169.34 MB |
+| DRVSTORE-TOP-0004 | 156.60 MB |
+| DRVSTORE-TOP-0005 | 72.73 MB |
 
 The largest private inventory rows match the observed storage footprint: NVIDIA
 display package around 2.55 GB, Intel graphics package around 1.28 GB, and Realtek

@@ -45,6 +45,19 @@ inventory was about 14,614.17 MB. This shows that AppData research needs both a
 policy shortlist and a broad inventory layer. The broad inventory is discovery data,
 not a cleanup candidate list.
 
+Top public size rows for TreeSize comparison:
+
+| Public inventory ID | Estimated size |
+|---|---:|
+| LOCALTOP-0001 | 3,607.85 MB |
+| LOCALTOP-0002 | 3,585.11 MB |
+| LOCALTOP-0003 | 1,367.38 MB |
+| LOCALTOP-0004 | 696.14 MB |
+| LOCALTOP-0005 | 640.71 MB |
+| LOCALTOP-0006 | 585.89 MB |
+| LOCALTOP-0007 | 536.76 MB |
+| LOCALTOP-0008 | 533.43 MB |
+
 ## Special Notes
 
 Public inventory redacts top-level folder names by default to avoid leaking the
@@ -66,4 +79,3 @@ local review.
 This note corrects the interpretation of `RN-2026-05-24-APPDATA-DRYRUN-20260524-CODEX`.
 The earlier session was a cache-policy shortlist, not a TreeSize-like AppData
 inventory.
-

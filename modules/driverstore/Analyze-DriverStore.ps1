@@ -98,6 +98,9 @@ function Export-PublicResearchCsv {
     $headers = @(
         'ResearchId',
         'DriverName',
+        'PackageFolderCount',
+        'EstimatedPackageSizeBytes',
+        'EstimatedPackageSizeMB',
         'WebSearchQuery',
         'LegacySearchQuery',
         'WebResearchStatus',
@@ -171,6 +174,37 @@ function Get-DriverStoreTopLevelInventory {
     }
 }
 
+function Get-DriverPackageFolderStats {
+    param(
+        [Parameter(Mandatory)][string]$FileRepositoryPath,
+        [Parameter(Mandatory)][string]$OriginalName
+    )
+
+    if ([string]::IsNullOrWhiteSpace($OriginalName) -or
+        -not (Test-Path -LiteralPath $FileRepositoryPath -PathType Container)) {
+        return [pscustomobject]@{
+            PackageFolderCount = 0
+            EstimatedPackageSizeBytes = 0L
+            EstimatedPackageSizeMB = 0
+        }
+    }
+
+    $escapedName = [regex]::Escape($OriginalName)
+    $folders = @(Get-ChildItem -LiteralPath $FileRepositoryPath -Directory -Force -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -match "^$escapedName_" })
+
+    $total = 0L
+    foreach ($folder in $folders) {
+        $total += Get-DirectorySizeBytes -Path $folder.FullName
+    }
+
+    [pscustomobject]@{
+        PackageFolderCount = $folders.Count
+        EstimatedPackageSizeBytes = $total
+        EstimatedPackageSizeMB = [math]::Round($total / 1MB, 2)
+    }
+}
+
 function Export-PublicInventoryCsv {
     param(
         [Parameter(Mandatory)]
@@ -229,6 +263,7 @@ $rawLines | Set-Content -Path $rawPath -Encoding UTF8
 
 $drivers = @(ConvertFrom-PnpUtilEnumDrivers -Lines $rawLines)
 $drivers | Export-Csv -Path $allPath -NoTypeInformation -Encoding UTF8
+$fileRepositoryPath = Join-Path $env:WINDIR 'System32\DriverStore\FileRepository'
 
 $riskyClassPattern = '(?i)display|net|bluetooth|system|media|audio|sound|hdc|scsi|storage|disk|usb|printer|firmware|extension|softwarecomponent'
 $candidates = New-Object System.Collections.Generic.List[object]
@@ -250,6 +285,7 @@ $drivers |
 
             $candidateIndex++
             $researchId = 'DRV-{0:D4}' -f $candidateIndex
+            $packageStats = Get-DriverPackageFolderStats -FileRepositoryPath $fileRepositoryPath -OriginalName $old.OriginalName
 
             $candidates.Add([pscustomobject]@{
                 ResearchId = $researchId
@@ -262,6 +298,9 @@ $drivers |
                 KeepPublishedName = $keep.PublishedName
                 KeepDriverDate = $keep.DriverDate
                 KeepDriverVersion = $keep.DriverVersion
+                PackageFolderCount = $packageStats.PackageFolderCount
+                EstimatedPackageSizeBytes = $packageStats.EstimatedPackageSizeBytes
+                EstimatedPackageSizeMB = $packageStats.EstimatedPackageSizeMB
                 Reason = 'Older duplicate; newest matching driver kept'
                 WebSearchQuery = '"' + $old.Provider + '" "' + $old.OriginalName + '" "' + $old.DriverVersion + '" driver'
                 VendorSearchQuery = '"' + $old.Provider + '" "' + $old.OriginalName + '" support driver download'
@@ -288,6 +327,9 @@ $publicReviewRows = foreach ($candidate in $candidates) {
     [pscustomobject]@{
         ResearchId = $candidate.ResearchId
         DriverName = $candidate.OriginalName
+        PackageFolderCount = $candidate.PackageFolderCount
+        EstimatedPackageSizeBytes = $candidate.EstimatedPackageSizeBytes
+        EstimatedPackageSizeMB = $candidate.EstimatedPackageSizeMB
         WebSearchQuery = '"' + $candidate.OriginalName + '" driver'
         LegacySearchQuery = '"' + $candidate.OriginalName + '" legacy Windows XP Windows 7 required'
         WebResearchStatus = 'PendingResearch'
@@ -304,7 +346,6 @@ $publicReviewRows = foreach ($candidate in $candidates) {
 }
 Export-PublicResearchCsv -Rows @($publicReviewRows) -Path $publicReviewPath
 
-$fileRepositoryPath = Join-Path $env:WINDIR 'System32\DriverStore\FileRepository'
 $topRows = @(Get-DriverStoreTopLevelInventory -SessionId $SessionId -RootPath $fileRepositoryPath -Top $TopFileRepositoryFolders)
 $topRows | Export-Csv -Path $topPrivatePath -NoTypeInformation -Encoding UTF8
 Export-PublicInventoryCsv -Rows $topRows -Path $topPublicPath -PublicFolderNames:$PublicFolderNames

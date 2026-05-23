@@ -33,6 +33,22 @@ Agent: Codex
 - Top-level FileRepository inventory total: 4,838.89 MB
 - DeleteApproved: 0
 
+## Top Folder Size Summary
+
+These rows are redacted to match the public CSV. The private CSV contains the
+actual folder names for local TreeSize comparison.
+
+| Public inventory ID | Public item name | Estimated size |
+|---|---|---:|
+| DRVSTORE-TOP-0001 | DriverStore FileRepository top-level #01 | 2,554.15 MB |
+| DRVSTORE-TOP-0002 | DriverStore FileRepository top-level #02 | 1,279.15 MB |
+| DRVSTORE-TOP-0003 | DriverStore FileRepository top-level #03 | 169.34 MB |
+| DRVSTORE-TOP-0004 | DriverStore FileRepository top-level #04 | 156.60 MB |
+| DRVSTORE-TOP-0005 | DriverStore FileRepository top-level #05 | 72.73 MB |
+| DRVSTORE-TOP-0006 | DriverStore FileRepository top-level #06 | 63.82 MB |
+| DRVSTORE-TOP-0007 | DriverStore FileRepository top-level #07 | 44.97 MB |
+| DRVSTORE-TOP-0008 | DriverStore FileRepository top-level #08 | 43.14 MB |
+
 ## Correction Note
 
 The earlier DriverStore report described duplicate-driver cleanup candidates. It

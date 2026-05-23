@@ -1,4 +1,4 @@
-<!-- AUTO_START | hash: 535c20f7 | built: 2026-05-24T00:56 -->
+<!-- AUTO_START | hash: a447e67b | built: 2026-05-24T01:01 -->
 # Context: `modules/driverstore`
 
 > **[auto-generated — không sửa tay phần này]**  
@@ -25,6 +25,10 @@ Các hàm được expose qua IPC bridge:
 - **`Get-DriverGroupKey`**
   ```text
   function Get-DriverGroupKey([Parameter(Mandatory)]$Driver)
+  ```
+- **`Get-DriverPackageFolderStats`**
+  ```text
+  function Get-DriverPackageFolderStats([Parameter(Mandatory)][string]$FileRepositoryPath, [Parameter(Mandatory)][string]$OriginalName)
   ```
 - **`Export-PublicResearchCsv`**
   ```text

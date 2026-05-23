@@ -33,6 +33,22 @@ Agent: Codex
 - Top-level LocalAppData inventory total: 14,614.17 MB
 - DeleteApproved: 0
 
+## Top Folder Size Summary
+
+These rows are redacted to match the public CSV. The private CSV contains the
+actual folder names for local TreeSize comparison.
+
+| Public inventory ID | Public item name | Estimated size |
+|---|---|---:|
+| LOCALTOP-0001 | LocalAppData top-level #01 | 3,607.85 MB |
+| LOCALTOP-0002 | LocalAppData top-level #02 | 3,585.11 MB |
+| LOCALTOP-0003 | LocalAppData top-level #03 | 1,367.38 MB |
+| LOCALTOP-0004 | LocalAppData top-level #04 | 696.14 MB |
+| LOCALTOP-0005 | LocalAppData top-level #05 | 640.71 MB |
+| LOCALTOP-0006 | LocalAppData top-level #06 | 585.89 MB |
+| LOCALTOP-0007 | LocalAppData top-level #07 | 536.76 MB |
+| LOCALTOP-0008 | LocalAppData top-level #08 | 533.43 MB |
+
 ## Correction Note
 
 The earlier AppData dry-run only reported known cache policy paths. That was not a
@@ -66,4 +82,3 @@ and local paths for local diagnosis.
 - [x] No browser profile contents
 - [x] No mail file names
 - [x] Top-level folder names redacted in public inventory
-

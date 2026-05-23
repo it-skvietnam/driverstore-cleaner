@@ -49,6 +49,19 @@ The broad inventory is discovery data, not a deletion list. Large GPU or audio
 driver folders can be normal and may still be bound to active devices or OEM
 customizations.
 
+Top public size rows for TreeSize comparison:
+
+| Public inventory ID | Estimated size |
+|---|---:|
+| DRVSTORE-TOP-0001 | 2,554.15 MB |
+| DRVSTORE-TOP-0002 | 1,279.15 MB |
+| DRVSTORE-TOP-0003 | 169.34 MB |
+| DRVSTORE-TOP-0004 | 156.60 MB |
+| DRVSTORE-TOP-0005 | 72.73 MB |
+| DRVSTORE-TOP-0006 | 63.82 MB |
+| DRVSTORE-TOP-0007 | 44.97 MB |
+| DRVSTORE-TOP-0008 | 43.14 MB |
+
 ## Special Notes
 
 Public inventory redacts top-level folder names by default to avoid leaking device
