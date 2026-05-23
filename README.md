@@ -185,6 +185,33 @@ reports:
 Do not publish private reports. Only append a public summary to this README after a
 real execution has been explicitly approved and completed.
 
+## Case study: risky duplicate research
+
+Session `POC-DRYRUN-20260523` found no automatically deletable candidates under the
+default conservative filter. A wider private inventory check found four duplicate
+driver-name groups, but all are in risky device classes. The public conclusion is:
+these are research candidates, not deletion candidates.
+
+No drivers were deleted during this case study.
+
+| Research area | Driver name | Role | Public evidence | Assessment | Public decision |
+|---|---|---|---|---|---|
+| System device | `heci.inf` | Intel Management Engine Interface / HECI | Intel says Intel ME drivers for laptops/desktops are customized by system design and recommends using the system or motherboard manufacturer driver first. Intel also provides generic ME drivers for some cases. Sources: [Intel ME OEM systems](https://www.intel.com/content/www/us/en/support/articles/000058834/software.html), [Intel ME laptop/desktop guidance](https://www.intel.com/content/www/us/en/support/articles/000058711/processors.html). | `LegacyKeep` | Do not auto-delete. Only review exact-model OEM evidence before considering an older duplicate. |
+| Bluetooth | `ibtusb.inf` | Intel Wireless Bluetooth USB driver | Intel's current Windows 10/11 Bluetooth package is version 24.40.0, but Intel notes the driver version varies by installed adapter. Source: [Intel Wireless Bluetooth drivers](https://www.intel.com/content/www/us/en/download/18649/intel-wireless-bluetooth-for-windows-10-and-windows-11.html). | `UnknownKeep` | Do not auto-delete. Treat as candidate only after confirming the exact Bluetooth adapter is supported by the newer package and the old package is not bound to a device. |
+| Display audio | `intcdaud.inf` | Intel Display Audio, usually shipped with Intel graphics packages | Intel graphics release notes show Intel Display Audio is versioned inside graphics packages; generation-specific package differences matter. Sources: [Intel graphics release notes with Display Audio 11.1.0.23](https://downloadmirror.intel.com/871509/ReleaseNotes_101.2140.pdf), [Intel community note on IntcDAud package differences](https://community.intel.com/t5/Graphics/Intel-Graphics-Driver-Version-24-20-100-6136-amp-Intel-Display/m-p/554045). | `UnknownKeep` | Do not auto-delete. A newer-looking Display Audio package does not prove older packages are safe without exact graphics generation and device binding checks. |
+| Realtek audio | `hdxlvj.inf` | Realtek/Lenovo audio package | Lenovo publishes machine-family-specific Realtek audio packages, including newer Windows 10/11 packages, and older ThinkPad packages that support Windows 7/8/10. Sources: [Lenovo ThinkPad Realtek 6.0.9847.1](https://support.lenovo.com/us/en/downloads/ds555920-realtek-audio-driver-for-windows-11-version-21h2-or-later-thinkpad), [Lenovo ThinkPad Realtek 6.0.9239.1](https://support.lenovo.com/gb/en/downloads/ds500835-realtek-high-definition-audio-driver-for-windows-10-64-bit-thinkpad), [Lenovo legacy Realtek package](https://support.lenovo.com/us/en/downloads/ds104050-realtek-high-definition-audio-driver-for-windows-10-32-bit-81-32-bit-64-bit-8-32-bit-64-bit-7-32-bit-64-bit-thinkpad). | `UnknownKeep` | Do not auto-delete. Realtek audio packages are often OEM-customized; exact model support and installed audio extensions must be verified first. |
+
+Research outcome:
+
+- `OutdatedDuplicate`: 0
+- `LegacyKeep`: 1
+- `UnknownKeep`: 3
+- `DeleteApproved`: 0
+
+This validates the current safety model: a broad duplicate scan can reveal useful
+research targets, but the default deletion list should stay empty until evidence
+proves a package is only an outdated duplicate.
+
 ## PoC critique
 
 The core weakness is that a public file with only driver names cannot always
