@@ -27,7 +27,7 @@ Agent: Codex
 - Duplicate driver-name groups: 4
 - Default safe candidates: 0
 - Risky-class duplicate groups: 4
-- Public research rows: 0
+- Public research rows: 4
 
 ## Research Summary
 
@@ -49,9 +49,7 @@ Agent: Codex
 
 ## Public Case Notes
 
-A broader duplicate scan found four risky-class duplicate groups. Public research
-classified them as research candidates rather than deletion candidates because OEM
-and device-generation evidence is required.
+A broader duplicate scan found four risky-class duplicate groups. The public research CSV now includes one anonymized row per driver-name group. Public research classified them as research candidates rather than deletion candidates because OEM and device-generation evidence is required.
 
 ## Privacy Checklist
 
@@ -61,3 +59,4 @@ and device-generation evidence is required.
 - [x] No username, computer name, serial number, or local path
 - [x] No `ResearchId -> PublishedName` mapping
 - [x] Public evidence URLs only
+
