@@ -1,4 +1,4 @@
-<!-- AUTO_START | hash: 628a1899 | built: 2026-05-24T00:32 -->
+<!-- AUTO_START | hash: 918a872a | built: 2026-05-24T00:51 -->
 # Context: `modules/appdata`
 
 > **[auto-generated — không sửa tay phần này]**  
@@ -25,12 +25,20 @@ Các hàm được expose qua IPC bridge:
   ```text
   function Export-PublicAppDataCsv([Parameter(Mandatory)][object[]]$Rows, [Parameter(Mandatory)][string]$Path)
   ```
+- **`Get-AppDataTopLevelInventory`**
+  ```text
+  function Get-AppDataTopLevelInventory([Parameter(Mandatory)][string]$SessionId, [Parameter(Mandatory)][string]$RootPath, [Parameter(Mandatory)][int]$Top)
+  ```
+- **`Export-PublicInventoryCsv`**
+  ```text
+  function Export-PublicInventoryCsv([Parameter(Mandatory)][object[]]$Rows, [Parameter(Mandatory)][string]$Path, [switch]$PublicFolderNames)
+  ```
 
 ## [auto] Public Functions
 
 ### `Analyze-AppDataCaches` (line 1)
 ```text
-function Analyze-AppDataCaches([string]$OutputDir = (Join-Path $PSScriptRoot '..\..\reports'), [string]$SessionId = (Get-Date -Format 'yyyyMMdd-HHmmss'), [int]$MaxDepth = 6)
+function Analyze-AppDataCaches([string]$OutputDir = (Join-Path $PSScriptRoot '..\..\reports'), [string]$SessionId = (Get-Date -Format 'yyyyMMdd-HHmmss'), [int]$MaxDepth = 6, [int]$TopLocalFolders = 30, [switch]$PublicFolderNames)
 ```
 
 <!-- AUTO_END -->

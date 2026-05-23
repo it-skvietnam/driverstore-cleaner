@@ -17,3 +17,16 @@ Milestone:  M3 - AppData Analyze-Only Module
 Status:     OPEN
 Resolved:
 Decision:   OPEN
+
+## 2026-05-24T00:51 | staleness | modules_appdata
+Status:     OPEN
+Tension:    `[auto]` thay đổi nhưng `[manual]` chưa review
+Context:    Hash mismatch trong `.context/modules_appdata.md` — `628a1899` → `918a872a` (built: 2026-05-24T00:32)
+Proposal:   Review `[manual]` Design Decisions và Invariants của module `modules_appdata`, confirm hoặc update nếu cần, rebuild để clear warning
+Constraint: `[manual]` có thể outdated so với code thực tế
+Severity:   low
+Tags:       staleness, modules_appdata
+Milestone:  M3 - AppData Analyze-Only Module
+Decision:   [human fill in]
+
+---

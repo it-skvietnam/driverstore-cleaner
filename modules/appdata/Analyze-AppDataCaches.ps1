@@ -2,7 +2,9 @@
 param(
     [string]$OutputDir = (Join-Path $PSScriptRoot '..\..\reports'),
     [string]$SessionId = (Get-Date -Format 'yyyyMMdd-HHmmss'),
-    [int]$MaxDepth = 6
+    [int]$MaxDepth = 6,
+    [int]$TopLocalFolders = 30,
+    [switch]$PublicFolderNames
 )
 
 Set-StrictMode -Version Latest
@@ -105,6 +107,79 @@ function Export-PrivateAppDataCsv {
     $Rows | Export-Csv -Path $Path -NoTypeInformation -Encoding UTF8
 }
 
+function Get-AppDataTopLevelInventory {
+    param(
+        [Parameter(Mandatory)][string]$SessionId,
+        [Parameter(Mandatory)][string]$RootPath,
+        [Parameter(Mandatory)][int]$Top
+    )
+
+    if (-not (Test-Path -LiteralPath $RootPath -PathType Container)) {
+        return @()
+    }
+
+    $rows = New-Object System.Collections.Generic.List[object]
+    foreach ($directory in Get-ChildItem -LiteralPath $RootPath -Directory -Force -ErrorAction SilentlyContinue) {
+        $size = Get-DirectorySizeBytes -Path $directory.FullName
+        $rows.Add([pscustomobject]@{
+            SessionId = $SessionId
+            Module = 'appdata'
+            InventoryId = ''
+            Scope = 'LocalAppDataTopLevel'
+            FolderName = $directory.Name
+            LocalPath = $directory.FullName
+            EstimatedSizeBytes = $size
+            EstimatedSizeMB = [math]::Round($size / 1MB, 2)
+            RiskLevel = 'ReviewRequired'
+            Assessment = 'InventoryOnly'
+            PublicNotes = 'Top-level LocalAppData inventory. This is not a cleanup candidate by itself.'
+        })
+    }
+
+    $rank = 0
+    foreach ($row in @($rows | Sort-Object EstimatedSizeBytes -Descending | Select-Object -First $Top)) {
+        $rank++
+        $row.InventoryId = 'LOCALTOP-{0:D4}' -f $rank
+        $row
+    }
+}
+
+function Export-PublicInventoryCsv {
+    param(
+        [Parameter(Mandatory)][object[]]$Rows,
+        [Parameter(Mandatory)][string]$Path,
+        [switch]$PublicFolderNames
+    )
+
+    $publicRows = foreach ($row in $Rows) {
+        $displayName = if ($PublicFolderNames) {
+            $row.FolderName
+        } else {
+            'LocalAppData top-level #{0:D2}' -f ([int]($row.InventoryId -replace '\D', ''))
+        }
+
+        [pscustomobject]@{
+            SessionId = $row.SessionId
+            Module = $row.Module
+            InventoryId = $row.InventoryId
+            Scope = $row.Scope
+            ItemName = $displayName
+            ItemType = 'top-level-inventory'
+            EstimatedSizeBytes = $row.EstimatedSizeBytes
+            EstimatedSizeMB = $row.EstimatedSizeMB
+            RiskLevel = $row.RiskLevel
+            Assessment = $row.Assessment
+            PublicNotes = if ($PublicFolderNames) {
+                $row.PublicNotes
+            } else {
+                'Folder name redacted in public output; see private report locally.'
+            }
+        }
+    }
+
+    $publicRows | Export-Csv -Path $Path -NoTypeInformation -Encoding UTF8
+}
+
 $localAppData = [Environment]::GetFolderPath('LocalApplicationData')
 $roamingAppData = [Environment]::GetFolderPath('ApplicationData')
 $userProfile = [Environment]::GetFolderPath('UserProfile')
@@ -114,6 +189,8 @@ New-Item -ItemType Directory -Path $sessionDir -Force | Out-Null
 
 $privatePath = Join-Path $sessionDir 'appdata-research-private.csv'
 $publicPath = Join-Path $sessionDir 'appdata-research-public.csv'
+$topPrivatePath = Join-Path $sessionDir 'appdata-localtop-private.csv'
+$topPublicPath = Join-Path $sessionDir 'appdata-localtop-public.csv'
 
 $definitions = @(
     @{
@@ -238,14 +315,25 @@ $sortedRows = @($rows | Sort-Object EstimatedSizeBytes -Descending)
 Export-PrivateAppDataCsv -Rows $sortedRows -Path $privatePath
 Export-PublicAppDataCsv -Rows $sortedRows -Path $publicPath
 
+$topRows = @(Get-AppDataTopLevelInventory -SessionId $SessionId -RootPath $localAppData -Top $TopLocalFolders)
+Export-PrivateAppDataCsv -Rows $topRows -Path $topPrivatePath
+Export-PublicInventoryCsv -Rows $topRows -Path $topPublicPath -PublicFolderNames:$PublicFolderNames
+
 $totalBytes = ($sortedRows | Measure-Object -Property EstimatedSizeBytes -Sum).Sum
 if ($null -eq $totalBytes) {
     $totalBytes = 0
 }
+$topTotalBytes = ($topRows | Measure-Object -Property EstimatedSizeBytes -Sum).Sum
+if ($null -eq $topTotalBytes) {
+    $topTotalBytes = 0
+}
 
 Write-Host "Private AppData report: $privatePath"
 Write-Host "Public AppData report: $publicPath"
+Write-Host "Private LocalAppData top-level inventory: $topPrivatePath"
+Write-Host "Public LocalAppData top-level inventory: $topPublicPath"
 Write-Host "Rows: $($sortedRows.Count)"
 Write-Host "Estimated total MB: $([math]::Round($totalBytes / 1MB, 2))"
+Write-Host "Top-level inventory rows: $($topRows.Count)"
+Write-Host "Top-level inventory total MB: $([math]::Round($topTotalBytes / 1MB, 2))"
 Write-Host 'Analyze-only: no files were deleted.'
-

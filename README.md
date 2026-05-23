@@ -145,6 +145,11 @@ The script writes:
   private execution context, git-ignored.
 - `reports\sessions\<session-id>\appdata-research-public.csv`: public cache
   categories, risk levels, and estimated sizes.
+- `reports\sessions\<session-id>\appdata-localtop-private.csv`: TreeSize-like
+  `%LOCALAPPDATA%` top-level folder inventory with private folder names and paths,
+  git-ignored.
+- `reports\sessions\<session-id>\appdata-localtop-public.csv`: redacted top-level
+  inventory with sizes only, safe for public comparison.
 
 No files are deleted. Outlook mail stores are reported as `DoNotDelete`.
 

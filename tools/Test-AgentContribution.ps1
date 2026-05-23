@@ -148,6 +148,27 @@ try {
         }
     }
 
+    $otherPublicArtifacts = @($tracked | Where-Object {
+        $normalized = $_ -replace '\\', '/'
+        $normalized -match '^reports/sessions/[^/]+/[^/]+-public\.(csv|md)$' -and
+        $publicCsvs -notcontains $_ -and
+        $publicSpecs -notcontains $_
+    })
+    foreach ($artifact in $otherPublicArtifacts) {
+        $content = Get-Content -Path $artifact -Raw -Encoding UTF8
+        if ($content -match '(?i)([A-Z]:\\|/mnt/[a-z]/|\\Users\\|/home/)') {
+            $failures.Add("Public artifact appears to contain a local path: $artifact")
+        }
+        if ($content -match 'oem\d+\.inf') {
+            $failures.Add("Public artifact contains local PublishedName pattern: $artifact")
+        }
+        foreach ($header in @('LocalPath', 'LocalPathOrId', 'ExactCommand')) {
+            if ($content -match "(^|,)$header(,|$)") {
+                $failures.Add("Public artifact contains private column '$header': $artifact")
+            }
+        }
+    }
+
     if ($failures.Count -gt 0) {
         $failures | ForEach-Object { Write-Error $_ }
         throw "Agent contribution validation failed with $($failures.Count) issue(s)."
@@ -156,6 +177,7 @@ try {
     Write-Host "Agent contribution validation passed."
     Write-Host "Tracked public research CSVs: $($publicCsvs.Count)"
     Write-Host "Tracked public run specs: $($publicSpecs.Count)"
+    Write-Host "Tracked other public artifacts: $($otherPublicArtifacts.Count)"
     Write-Host "Tracked research notes: $($researchNotes.Count)"
 }
 finally {
