@@ -12,6 +12,19 @@
 
 Describe what this PR contributes.
 
+## Modules Touched
+
+- [ ] `driverstore`
+- [ ] `winsxs`
+- [ ] `appdata`
+- [ ] `office-outlook`
+- [ ] `browser-cache`
+- [ ] `dev-cache`
+- [ ] `wsl-docker`
+- [ ] `restore-points`
+- [ ] `windows-update`
+- [ ] docs/tooling only
+
 ## What Was Done
 
 Explain the actual work performed. Include commands or workflow steps at a high

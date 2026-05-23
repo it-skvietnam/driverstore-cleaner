@@ -48,6 +48,7 @@ Useful PRs include:
 - anonymized scan summaries from different Windows generations,
 - OEM/model-family case studies,
 - public research evidence for driver names,
+- module policies for Windows storage domains,
 - improved safety heuristics,
 - reporting improvements,
 - validation improvements.
@@ -86,6 +87,7 @@ may misclassify.
 
 In addition to the public run spec, the PR description must include:
 
+- Which module was touched: `driverstore`, `winsxs`, `appdata`, etc.
 - What was done: analyze, research, dry-run, execute, or docs/tooling.
 - What public information was added.
 - What private information was generated but kept local.

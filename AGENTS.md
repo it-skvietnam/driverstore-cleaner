@@ -1,22 +1,23 @@
-# AGENTS.md - DriverStore Cleaner
+# AGENTS.md - Windows Storage Research Cleaner
 
 > Read this file before doing any task in this repository.
-> This project handles Windows driver inventory. Treat local driver data as private
+> This project handles Windows storage inventory. Treat local scan data as private
 > unless a file is explicitly marked public/anonymized.
 
 ---
 
 ## 0. Project Goal
 
-DriverStore Cleaner is a proof-of-concept workflow for researching and safely
-removing stale Windows DriverStore packages. The long-term goal is to collect enough
-anonymized, evidence-backed driver cleanup cases to support:
+Windows Storage Research Cleaner is a proof-of-concept workflow for researching
+Windows storage bloat before deleting anything. DriverStore is the first active
+module. The long-term goal is to collect enough anonymized, evidence-backed cleanup
+cases to support:
 
-- a scientific-style dataset about DriverStore bloat and cleanup safety,
+- a scientific-style dataset about Windows storage bloat and cleanup safety,
 - a safer cleanup workflow than manual guessing,
-- a tool that can scan and explain DriverStore usage with TreeSize-like clarity,
+- a tool that can scan and explain Windows storage usage with TreeSize-like clarity,
 - optimization rules that respect Windows version, OEM model family, and legacy
-  device dependencies.
+  device/application dependencies.
 
 The project is not a blind deletion tool. Research quality and privacy are part of
 the product.
@@ -44,6 +45,7 @@ Do not open private reports unless the human asks for local diagnosis or executi
 
 Private by default:
 
+- module private outputs,
 - `reports\driverstore-raw.txt`
 - `reports\driverstore-all.csv`
 - `reports\driverstore-candidates.csv`
@@ -67,6 +69,7 @@ Public by default:
 
 - Never delete files directly from `C:\Windows\System32\DriverStore\FileRepository`.
 - Removal must use `pnputil /delete-driver <oemXX.inf> /uninstall`.
+- Future modules must use their supported cleanup APIs only.
 - Do not use `/force` unless the human explicitly approves it for a specific row.
 - Do not run `Remove-DriverStoreCandidates.ps1 -Execute` without explicit human
   approval in the current conversation.

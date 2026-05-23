@@ -1,16 +1,30 @@
-# DriverStore Cleaner
+# Windows Storage Research Cleaner with Agent
 
-DriverStore Cleaner is a proof-of-concept workflow for reducing Windows
-`DriverStore` bloat without treating driver deletion as a blind cleanup task. It
-uses `pnputil` for all driver operations, keeps local machine details private, and
-adds a research gate before any driver package can be removed.
+Windows Storage Research Cleaner with Agent is a proof-of-concept workflow for
+researching Windows storage bloat before deleting anything. The repo started with
+DriverStore cleanup, and now treats DriverStore as the first module in a broader
+research-first cleanup system.
 
-The repo exists because most DriverStore cleanup tools still depend on the user to
-decide whether an old package is safe to remove. That is a hard judgment: an old
-driver can be a harmless outdated duplicate, or it can be a legacy package required
-for hotkeys, ACPI devices, sensors, storage, audio routing, or vendor utilities.
-This workflow turns that judgment into a reviewable CSV process with evidence
-fields, privacy boundaries, dry-run execution, and audit-friendly outputs.
+The goal is not to build a blind cleaner. The goal is to build an agent-assisted
+research workflow that can scan storage domains, classify risk, keep local machine
+details private, collect public evidence, and only execute cleanup after explicit
+approval.
+
+Current module:
+
+- `driverstore`: stale Windows driver package research and gated cleanup via
+  `pnputil`.
+
+Planned modules:
+
+- `winsxs`
+- `appdata`
+- `office-outlook`
+- `browser-cache`
+- `dev-cache`
+- `wsl-docker`
+- `restore-points`
+- `windows-update`
 
 ## Problem gap
 
@@ -25,16 +39,40 @@ Existing cleanup flows usually cover only part of the problem:
   what was deleted, and how effective the cleanup was.
 
 This repo is designed to close that gap by splitting the process into private local
-state, public anonymized research, review-gated deletion, and session reporting.
+state, public anonymized research, review-gated deletion, and session reporting. The
+same structure will be reused for AppData caches, WinSxS explanations, WSL/Docker
+analysis, browser/dev caches, restore points, and Windows Update cache.
 
 ## Current safety model
 
-- Never delete directly from `C:\Windows\System32\DriverStore\FileRepository`.
-- Use `pnputil /delete-driver ... /uninstall` for removal.
-- Keep raw/local driver inventory private and git-ignored.
-- Share only anonymized `ResearchId` plus driver-name research prompts.
+- Never delete directly from protected system stores.
+- Use module-supported cleanup APIs only, such as `pnputil` for DriverStore and
+  DISM for WinSxS.
+- Keep raw/local inventory private and git-ignored.
+- Share only anonymized public research artifacts.
 - Default unknown or legacy-looking drivers to keep.
 - Require explicit approval before any real deletion.
+
+## Module layout
+
+```text
+modules/
+├─ MODULES.md
+└─ driverstore/
+   ├─ Analyze-DriverStore.ps1
+   ├─ Research-DriverCandidates.ps1
+   ├─ Merge-DriverResearchReview.ps1
+   ├─ Remove-DriverStoreCandidates.ps1
+   └─ README.md
+
+schemas/
+├─ candidate.schema.md
+├─ module-policy.schema.md
+├─ public-run-spec.schema.md
+└─ research-note.schema.md
+```
+
+Root-level DriverStore scripts remain as compatibility wrappers.
 
 ## DriverStore cleanup workflow
 
