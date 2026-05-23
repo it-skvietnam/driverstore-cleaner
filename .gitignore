@@ -1,2 +1,15 @@
-﻿reports/
-*.log
+﻿*.log
+
+# Private/local DriverStore outputs. These can fingerprint the machine.
+/reports/driverstore-raw.txt
+/reports/driverstore-all.csv
+/reports/driverstore-candidates.csv
+/reports/driverstore-research-review.csv
+/reports/sessions/*/driverstore-research-private.csv
+/reports/sessions/*/driverstore-research-merged.csv
+/reports/sessions/*/*private*.csv
+/reports/sessions/*/*merged*.csv
+/reports/sessions/*/*.log
+
+# Public/anonymized reports are intentionally trackable, especially:
+# /reports/sessions/*/driverstore-research-public.csv
