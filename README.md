@@ -195,10 +195,14 @@ approved through the review gate.
 DriverStore reports must keep folder size visible:
 
 - inventory CSV files include `EstimatedSizeBytes` and `EstimatedSizeMB`,
+- DriverStore public inventory includes `OriginalName` and `Architecture` so agents
+  can research entries such as `nvltwi.inf` or `iigd_dch.inf`,
 - candidate/research CSV files include `PackageFolderCount`,
   `EstimatedPackageSizeBytes`, and `EstimatedPackageSizeMB` when candidates exist,
 - public run specs include a top-size summary table so results can be compared with
   TreeSize or similar tools without opening private reports.
+- DriverStore public inventory must not include `PublishedName` (`oemXX.inf`), full
+  FileRepository folder names, hash suffixes, local paths, or exact delete commands.
 
 ## Privacy split for research
 
@@ -362,13 +366,13 @@ New result:
 
 Top public inventory sizes:
 
-| Public inventory ID | Estimated size |
-|---|---:|
-| DRVSTORE-TOP-0001 | 2,554.15 MB |
-| DRVSTORE-TOP-0002 | 1,279.15 MB |
-| DRVSTORE-TOP-0003 | 169.34 MB |
-| DRVSTORE-TOP-0004 | 156.60 MB |
-| DRVSTORE-TOP-0005 | 72.73 MB |
+| Public inventory ID | OriginalName | Estimated size |
+|---|---|---:|
+| DRVSTORE-TOP-0001 | `nvltwi.inf` | 2,554.15 MB |
+| DRVSTORE-TOP-0002 | `iigd_dch.inf` | 1,279.15 MB |
+| DRVSTORE-TOP-0003 | `hdxlvj.inf` | 169.34 MB |
+| DRVSTORE-TOP-0004 | `hdxlvj.inf` | 156.60 MB |
+| DRVSTORE-TOP-0005 | `synpd.inf` | 72.73 MB |
 
 The largest private inventory rows match the observed storage footprint: NVIDIA
 display package around 2.55 GB, Intel graphics package around 1.28 GB, and Realtek

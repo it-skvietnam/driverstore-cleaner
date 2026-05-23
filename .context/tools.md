@@ -1,4 +1,4 @@
-<!-- AUTO_START | hash: 45ab23a3 | built: 2026-05-24T01:01 -->
+<!-- AUTO_START | hash: 45ab23a3 | built: 2026-05-24T01:09 -->
 # Context: `tools`
 
 > **[auto-generated — không sửa tay phần này]**  

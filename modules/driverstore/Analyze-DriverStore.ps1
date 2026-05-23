@@ -157,6 +157,8 @@ function Get-DriverStoreTopLevelInventory {
             InventoryId = ''
             Scope = 'DriverStoreFileRepositoryTopLevel'
             FolderName = $directory.Name
+            OriginalName = if ($directory.Name -match '^(?<original>.+?\.inf)_') { $matches.original } else { $directory.Name }
+            Architecture = if ($directory.Name -match '\.inf_(?<arch>[^_]+)_') { $matches.arch } else { '' }
             LocalPath = $directory.FullName
             EstimatedSizeBytes = $size
             EstimatedSizeMB = [math]::Round($size / 1MB, 2)
@@ -228,6 +230,8 @@ function Export-PublicInventoryCsv {
             InventoryId = $row.InventoryId
             Scope = $row.Scope
             ItemName = $displayName
+            OriginalName = $row.OriginalName
+            Architecture = $row.Architecture
             ItemType = 'top-level-inventory'
             EstimatedSizeBytes = $row.EstimatedSizeBytes
             EstimatedSizeMB = $row.EstimatedSizeMB

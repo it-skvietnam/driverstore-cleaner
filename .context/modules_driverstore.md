@@ -1,4 +1,4 @@
-<!-- AUTO_START | hash: a447e67b | built: 2026-05-24T01:01 -->
+<!-- AUTO_START | hash: a447e67b | built: 2026-05-24T01:09 -->
 # Context: `modules/driverstore`
 
 > **[auto-generated — không sửa tay phần này]**  
