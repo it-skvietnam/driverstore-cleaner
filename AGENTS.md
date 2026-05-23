@@ -226,6 +226,30 @@ Negative results are valid. If no driver was deleted, explain why that is useful
 for example, the run may show that a ThinkPad audio package is OEM-specific and
 should not be treated as a generic Realtek duplicate.
 
+## 4.2 PR Requirement: Research Note Ledger Entry
+
+Every scan/research PR must add one new public research note under:
+
+```text
+research-notes/YYYY-MM-DD-<session-id>-<agent-tool>.md
+```
+
+Use `research-notes/TEMPLATE.md`.
+
+Required declarations:
+
+- Agent tool, such as Codex, Claude Code, Cursor, Aider, or Human.
+- Agent model, such as GPT-5, Claude Sonnet, or unknown.
+- Operator, as a public handle or `anonymous`.
+- Session ID.
+- Windows generation/release.
+- OEM, machine family, and model line.
+- Public files contributed.
+- What was done and what was learned.
+
+Research notes are append-only. Do not delete or rewrite older notes. If an old note
+is wrong, add a new correction note and reference the old entry ID.
+
 ---
 
 ## 5. Research Evidence Rules

@@ -97,6 +97,30 @@ try {
         }
     }
 
+    $researchNotes = @($tracked | Where-Object { ($_ -replace '\\', '/') -match '^research-notes/\d{4}-\d{2}-\d{2}-.+\.md$' -and ($_ -replace '\\', '/') -notmatch '^research-notes/(README|TEMPLATE)\.md$' })
+    foreach ($note in $researchNotes) {
+        $content = Get-Content -Path $note -Raw -Encoding UTF8
+        foreach ($required in @('Entry ID:', 'Session ID:', 'Agent tool:', 'Agent model:', 'Windows generation:', 'OEM:', 'Machine family:', 'What Was Learned', 'Privacy Review')) {
+            if ($content -notmatch [regex]::Escape($required)) {
+                $failures.Add("Research note missing '$required': $note")
+            }
+        }
+        if ($content -match 'oem\d+\.inf') {
+            $failures.Add("Research note contains local PublishedName pattern: $note")
+        }
+    }
+
+    foreach ($csv in $publicCsvs) {
+        $sessionId = (($csv -replace '\\', '/') -split '/')[2]
+        $matchingNotes = @($researchNotes | Where-Object {
+            $content = Get-Content -Path $_ -Raw -Encoding UTF8
+            $content -match [regex]::Escape("Session ID: $sessionId")
+        })
+        if ($matchingNotes.Count -eq 0) {
+            $failures.Add("Missing research note for public CSV session: $sessionId")
+        }
+    }
+
     if ($failures.Count -gt 0) {
         $failures | ForEach-Object { Write-Error $_ }
         throw "Agent contribution validation failed with $($failures.Count) issue(s)."
@@ -105,6 +129,7 @@ try {
     Write-Host "Agent contribution validation passed."
     Write-Host "Tracked public research CSVs: $($publicCsvs.Count)"
     Write-Host "Tracked public run specs: $($publicSpecs.Count)"
+    Write-Host "Tracked research notes: $($researchNotes.Count)"
 }
 finally {
     Pop-Location

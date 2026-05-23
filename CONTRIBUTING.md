@@ -96,6 +96,25 @@ In addition to the public run spec, the PR description must include:
 Good PR descriptions explain both positive and negative results. A run that deletes
 nothing can still be valuable if it proves a class of drivers should be kept.
 
+## Required Research Note
+
+Scan/research PRs must add one append-only note under:
+
+```text
+research-notes/YYYY-MM-DD-<session-id>-<agent-tool>.md
+```
+
+Use `research-notes/TEMPLATE.md`.
+
+Each note must declare the agent tool and model. Examples:
+
+- Agent tool: Codex
+- Agent model: GPT-5
+- Agent tool: Claude Code
+- Agent model: Claude Sonnet
+
+Do not remove or rewrite older notes. Add correction notes instead.
+
 ## Review Standard
 
 The best contribution is not the one that deletes the most drivers. The best

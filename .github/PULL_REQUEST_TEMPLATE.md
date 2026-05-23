@@ -61,6 +61,20 @@ For scan/research PRs, link the required file:
 reports/sessions/<session-id>/driverstore-run-spec-public.md
 ```
 
+## Research Note
+
+For scan/research PRs, link the required append-only research note:
+
+```text
+research-notes/YYYY-MM-DD-<session-id>-<agent-tool>.md
+```
+
+Agent declaration:
+
+- Agent tool:
+- Agent model:
+- Operator:
+
 ## Safety
 
 - [ ] I did not commit private reports or raw driver inventory.
