@@ -79,8 +79,25 @@ Public by default:
 - Always run `-WhatIf` before any real execute.
 - Unknown evidence means keep. Use `UnknownKeep`, not deletion.
 - Legacy-looking evidence means keep. Use `LegacyKeep`, not deletion.
-- Do not publish `oemXX.inf`, installed driver versions/dates, class inventory,
-  signer names, usernames, computer names, serial numbers, or raw `pnputil` output.
+- Do not publish `oemXX.inf`, usernames, computer names, serial numbers, local
+  paths, exact delete commands, full FileRepository folder hashes, or raw
+  `pnputil` output.
+- Do not publish research artifacts that hide every researchable name behind
+  anonymous labels such as `LocalAppData top-level #01`. Public artifacts must keep
+  enough real identifiers for outside agents to research the item.
+- For AppData inventory, public CSV rows must include the real top-level folder or
+  product name, for example `Microsoft`, `Office`, `Mozilla`, `wsl`, or `Temp`.
+- For DriverStore inventory, public CSV rows must include `OriginalName`, for
+  example `nvltwi.inf` or `iigd_dch.inf`; keep `PublishedName`, full folder hashes,
+  and local paths private.
+
+Report trash must not be submitted in PRs:
+
+- obsolete public runs that have been replaced by a more complete corrected run,
+- public CSV/Markdown that only contains anonymous ranks and no researchable item
+  names,
+- public artifacts that duplicate another artifact with less accurate totals,
+- public artifacts that hide useful names while keeping only aggregate size.
 
 ---
 

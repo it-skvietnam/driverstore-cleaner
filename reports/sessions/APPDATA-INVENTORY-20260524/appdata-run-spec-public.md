@@ -30,24 +30,24 @@ Agent: Codex
 - Known cache policy rows: 11
 - Known cache policy total: 532.47 MB
 - Top-level LocalAppData inventory rows: 40
-- Top-level LocalAppData inventory total: 14,614.17 MB
+- Top-level LocalAppData inventory total: 14,613.50 MB
 - DeleteApproved: 0
 
 ## Top Folder Size Summary
 
-These rows are redacted to match the public CSV. The private CSV contains the
-actual folder names for local TreeSize comparison.
+These rows expose top-level folder/product names because anonymous ranks are not
+researchable. Local paths and user-specific file names remain private.
 
 | Public inventory ID | Public item name | Estimated size |
 |---|---|---:|
-| LOCALTOP-0001 | LocalAppData top-level #01 | 3,607.85 MB |
-| LOCALTOP-0002 | LocalAppData top-level #02 | 3,585.11 MB |
-| LOCALTOP-0003 | LocalAppData top-level #03 | 1,367.38 MB |
-| LOCALTOP-0004 | LocalAppData top-level #04 | 696.14 MB |
-| LOCALTOP-0005 | LocalAppData top-level #05 | 640.71 MB |
-| LOCALTOP-0006 | LocalAppData top-level #06 | 585.89 MB |
-| LOCALTOP-0007 | LocalAppData top-level #07 | 536.76 MB |
-| LOCALTOP-0008 | LocalAppData top-level #08 | 533.43 MB |
+| LOCALTOP-0001 | Microsoft | 3,607.85 MB |
+| LOCALTOP-0002 | wsl | 3,585.11 MB |
+| LOCALTOP-0003 | Mozilla | 1,366.71 MB |
+| LOCALTOP-0004 | OpenAI | 696.14 MB |
+| LOCALTOP-0005 | GitHubDesktop | 640.71 MB |
+| LOCALTOP-0006 | BraveSoftware | 585.89 MB |
+| LOCALTOP-0007 | Postman | 536.76 MB |
+| LOCALTOP-0008 | Programs | 533.43 MB |
 
 ## Correction Note
 
@@ -70,9 +70,8 @@ This session adds a top-level inventory layer so reports can distinguish:
 
 ## Public Case Notes
 
-The public top-level inventory redacts folder names by default, because installed
-application names can fingerprint a user. The private inventory keeps folder names
-and local paths for local diagnosis.
+The public top-level inventory keeps folder/product names because they are required
+for outside research. Local paths and user-specific file names remain private.
 
 ## Privacy Checklist
 

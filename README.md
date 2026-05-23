@@ -118,6 +118,12 @@ Public files can be committed and shared:
 - `research-notes/*.md`,
 - mock fixtures under `tests/`.
 
+Public reports must be researchable. Do not commit public artifacts that only expose
+anonymous labels such as `LocalAppData top-level #01` when a better public artifact
+can expose a non-local research key. For AppData, use real top-level folder/product
+names. For DriverStore, use `OriginalName` while keeping `PublishedName`, local
+paths, full folder hashes, and exact delete commands private.
+
 Private files are local-only and git-ignored:
 
 - `docs/private/`,

@@ -4,7 +4,7 @@ param(
     [string]$SessionId = (Get-Date -Format 'yyyyMMdd-HHmmss'),
     [int]$MaxDepth = 6,
     [int]$TopLocalFolders = 30,
-    [switch]$PublicFolderNames
+    [switch]$RedactPublicFolderNames
 )
 
 Set-StrictMode -Version Latest
@@ -148,14 +148,14 @@ function Export-PublicInventoryCsv {
     param(
         [Parameter(Mandatory)][object[]]$Rows,
         [Parameter(Mandatory)][string]$Path,
-        [switch]$PublicFolderNames
+        [switch]$RedactPublicFolderNames
     )
 
     $publicRows = foreach ($row in $Rows) {
-        $displayName = if ($PublicFolderNames) {
-            $row.FolderName
-        } else {
+        $displayName = if ($RedactPublicFolderNames) {
             'LocalAppData top-level #{0:D2}' -f ([int]($row.InventoryId -replace '\D', ''))
+        } else {
+            $row.FolderName
         }
 
         [pscustomobject]@{
@@ -169,10 +169,10 @@ function Export-PublicInventoryCsv {
             EstimatedSizeMB = $row.EstimatedSizeMB
             RiskLevel = $row.RiskLevel
             Assessment = $row.Assessment
-            PublicNotes = if ($PublicFolderNames) {
-                $row.PublicNotes
-            } else {
+            PublicNotes = if ($RedactPublicFolderNames) {
                 'Folder name redacted in public output; see private report locally.'
+            } else {
+                $row.PublicNotes
             }
         }
     }
@@ -317,7 +317,7 @@ Export-PublicAppDataCsv -Rows $sortedRows -Path $publicPath
 
 $topRows = @(Get-AppDataTopLevelInventory -SessionId $SessionId -RootPath $localAppData -Top $TopLocalFolders)
 Export-PrivateAppDataCsv -Rows $topRows -Path $topPrivatePath
-Export-PublicInventoryCsv -Rows $topRows -Path $topPublicPath -PublicFolderNames:$PublicFolderNames
+Export-PublicInventoryCsv -Rows $topRows -Path $topPublicPath -RedactPublicFolderNames:$RedactPublicFolderNames
 
 $totalBytes = ($sortedRows | Measure-Object -Property EstimatedSizeBytes -Sum).Sum
 if ($null -eq $totalBytes) {

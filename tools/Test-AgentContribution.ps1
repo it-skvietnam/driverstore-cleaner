@@ -25,6 +25,11 @@ try {
         '^reports/sessions/[^/]+/.*merged.*\.csv$',
         '^reports/sessions/[^/]+/.*\.log$'
     )
+    $obsoletePublicArtifacts = @(
+        'reports/sessions/APPDATA-DRYRUN-20260524/appdata-research-public.csv',
+        'reports/sessions/APPDATA-DRYRUN-20260524/appdata-run-spec-public.md',
+        'research-notes/2026-05-24-appdata-dryrun-20260524-codex.md'
+    )
 
     foreach ($file in $tracked) {
         $normalized = $file -replace '\\', '/'
@@ -32,6 +37,9 @@ try {
             if ($normalized -match $pattern) {
                 $failures.Add("Private file is tracked: $file")
             }
+        }
+        if ($obsoletePublicArtifacts -contains $normalized) {
+            $failures.Add("Obsolete public artifact is tracked and should be removed: $file")
         }
     }
 
@@ -155,6 +163,7 @@ try {
         $publicSpecs -notcontains $_
     })
     foreach ($artifact in $otherPublicArtifacts) {
+        $normalizedArtifact = $artifact -replace '\\', '/'
         $content = Get-Content -Path $artifact -Raw -Encoding UTF8
         if ($content -match '(?i)([A-Z]:\\|/mnt/[a-z]/|\\Users\\|/home/)') {
             $failures.Add("Public artifact appears to contain a local path: $artifact")
@@ -165,6 +174,20 @@ try {
         foreach ($header in @('LocalPath', 'LocalPathOrId', 'ExactCommand')) {
             if ($content -match "(^|,)$header(,|$)") {
                 $failures.Add("Public artifact contains private column '$header': $artifact")
+            }
+        }
+        if ($normalizedArtifact -like '*/appdata-localtop-public.csv') {
+            if ($content -match 'LocalAppData top-level #|Folder name redacted in public output') {
+                $failures.Add("AppData public inventory must expose researchable folder names, not anonymous ranks: $artifact")
+            }
+        }
+        if ($normalizedArtifact -like '*/driverstore-filerepository-top-public.csv') {
+            $firstLine = ($content -split "`r?`n" | Select-Object -First 1).Trim()
+            $actualHeaders = @($firstLine -split ',' | ForEach-Object { $_.Trim().Trim('"').Trim([char]0xFEFF) })
+            foreach ($header in @('OriginalName', 'Architecture', 'EstimatedSizeMB')) {
+                if ($actualHeaders -notcontains $header) {
+                    $failures.Add("DriverStore public inventory missing researchable header '$header': $artifact")
+                }
             }
         }
     }
