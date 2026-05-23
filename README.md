@@ -53,6 +53,13 @@ analysis, browser/dev caches, restore points, and Windows Update cache.
 - Default unknown or legacy-looking drivers to keep.
 - Require explicit approval before any real deletion.
 
+## Context Mapping
+
+This repository uses [WhySchools/context-mapping](https://github.com/WhySchools/context-mapping)
+to generate and maintain the `.context/` files that help agents understand module
+structure, milestones, and unresolved tensions across long sessions or context
+resets.
+
 ## Module layout
 
 ```text
